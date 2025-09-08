@@ -9,6 +9,9 @@ import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import { fetchScores, type ScoreRow } from "./api/client";
 import { getMe, logout } from "./api/auth";
+import ScoreDashboardCharts from "./components/ScoreDashboardCharts";
+
+
 
 export default function App() {
   const [scores, setScores] = useState<ScoreRow[]>([]);
@@ -54,13 +57,14 @@ export default function App() {
   return (
     <>
       {/* NAV con pestañas */}
-      <nav style={navBar}>
-        <div style={navInner}>
-          <div style={tabsWrap}>
+      <nav className="navbar">
+        <div className="navbar-inner">
+          <div className="tabs">
             <TabLink to="/">Inicio</TabLink>
             <TabLink to="/scores">Scores</TabLink>
+            <TabLink to="/dashboard">Dashboard</TabLink>
           </div>
-          <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+          <div className="ml-auto row">
             {user ? (
               <>
                 <TabLink to="/profile">Mi perfil</TabLink>
@@ -70,7 +74,7 @@ export default function App() {
                     setUser(null);
                     navigate("/");
                   }}
-                  style={btnLogout}
+                  className="tablink btn-logout"
                 >
                   Salir
                 </button>
@@ -82,7 +86,8 @@ export default function App() {
         </div>
       </nav>
 
-      <div style={{ padding: 16 }}>
+
+      <div className="container">
         {err && <div style={{ color: "red", marginBottom: 12 }}>{err}</div>}
 
         <Routes>
@@ -96,6 +101,10 @@ export default function App() {
                 <ScoreDashboard initialScores={scores} />
               )
             }
+          />
+          <Route
+          path="/dashboard"
+          element={<ScoreDashboardCharts scores={scores} loading={loading} />}
           />
           <Route
             path="/login"
@@ -175,21 +184,13 @@ const tabActive: React.CSSProperties = {
   color: "#ffffff",
   boxShadow: "0 1px 3px rgba(2,132,199,.25)",
 };
-function TabLink({
-  to,
-  children,
-}: {
-  to: string;
-  children: React.ReactNode;
-}) {
+function TabLink({ to, children }: { to: string; children: React.ReactNode }) {
   return (
     <NavLink
       to={to}
       end={to === "/"}
-      style={(
-        nav: { isActive: boolean; isPending: boolean; isTransitioning: boolean }
-      ): React.CSSProperties =>
-        nav.isActive ? { ...tabBase, ...tabActive } : { ...tabBase }
+      className={({ isActive }: { isActive: boolean }) =>
+        isActive ? "tablink is-active" : "tablink"
       }
     >
       {children}

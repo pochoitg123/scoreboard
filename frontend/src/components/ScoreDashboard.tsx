@@ -12,6 +12,7 @@ import {
   getClearLabel,
   publicUrl,
 } from "../utils/icons";
+import ScoreDashboardCharts from "@/components/ScoreDashboardCharts";
 
 /* ===== Query param helper ===== */
 function useQuery() {

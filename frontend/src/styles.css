@@ -371,15 +371,15 @@ html, body, #root {
 }
 .char {
   position: absolute; bottom: 6px;
-  max-height: 85%; object-fit: contain;
+  max-height: 100%; object-fit: contain;
   image-rendering: auto;
 }
 .char-p1 { left: 8px; transform: translateY(0) scale(1); }
 .char-p2 { right: 8px; transform: translateY(0) scale(1); }
 
 @media (max-width: 600px) {
-  .preview-system { height: 200px; }
-  .char { max-height: 75%; }
+  .preview-system { height: 300px; }
+  .char { max-height: 95%; }
 }
 
 /* (ya tenías estas) */
@@ -452,7 +452,7 @@ html, body, #root {
   bottom: 6px;
   z-index: 2;            /* encima del video */
   max-height: 100%;
-  max-width: 54%;
+  max-width: 84%;
   object-fit: contain;
   image-rendering: auto;
   pointer-events: none;  /* no bloquea clics en selects */
@@ -463,7 +463,7 @@ html, body, #root {
 /* Responsive */
 @media (max-width: 600px) {
   .stage { max-width: 100%; }
-  .char { max-width: 40%; max-height: 75%; }
+  .char { max-width: 70%; max-height: 95%; }
 }
 /* ===== Lane previews (Single/Double) ===== */
 .preview-lane {
@@ -786,7 +786,7 @@ html, body, #root {
 /* ===== System preview (video + chars) ===== */
 .stage{ position:relative; width:100%; max-width:560px; aspect-ratio:16/9; border-radius:10px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.35); }
 .stage-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; opacity:.9; }
-.char{ position:absolute; bottom:6px; z-index:2; max-height:85%; max-width:34%; object-fit:contain; pointer-events:none; }
+.char{ position:absolute; bottom:6px; z-index:2; max-height:95%; max-width:54%; object-fit:contain; pointer-events:none; }
 .char-p1{ left:8px; } .char-p2{ right:8px; }
 
 /* ===== Lane previews ===== */

@@ -188,3 +188,654 @@ html, body, #root {
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
+/* ===== Profile Page ===== */
+.profile-page {
+  display: grid;
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.profile-title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.profile-user,
+.profile-linked {
+  font-size: 14px;
+}
+
+.profile-loading { padding: 8px; }
+.profile-error { color: crimson; }
+
+/* ===== Tabs ===== */
+.tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+
+.tab {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-weight: 600;
+  color: #374151;
+}
+
+.tab:hover { background: #f3f4f6; }
+
+.tab.active {
+  background: #111827;
+  color: #e5e7eb;
+}
+
+/* ===== Card / Section ===== */
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}
+
+.card-title {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+/* ===== Form ===== */
+.form-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+}
+
+@media (max-width: 780px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+.form-field {
+  display: grid;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.input, .select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+}
+.input:focus, .select:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14,165,233,0.15);
+}
+
+.hint {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ===== Actions ===== */
+.actions {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn:hover { background: #f3f4f6; }
+
+.btn.primary {
+  border-color: transparent;
+  background: #0ea5e9;
+  color: #fff;
+}
+.btn.primary:hover { filter: brightness(0.95); }
+
+/* ===== Messages ===== */
+.msg {
+  font-size: 14px;
+}
+.msg.ok { color: #16a34a; }
+.msg.error { color: #dc2626; }
+/* ===== Subsections / Headings ===== */
+.subsection { margin-bottom: 16px; }
+.subsection-header {
+  display: flex; align-items: center; gap: 10px;
+  background: #1f2937; color: #e5e7eb;
+  padding: 8px 12px; border-radius: 8px;
+  border: 1px solid #374151;
+}
+.subsection-header .bar {
+  width: 6px; height: 20px; background: #f59e0b; border-radius: 2px;
+}
+.subsection-header h4 { margin: 0; font-size: 16px; font-weight: 700; }
+
+/* ===== Customize layout ===== */
+.custom-row {
+  display: grid; gap: 12px; grid-template-columns: 1fr 1fr;
+  margin-top: 10px;
+}
+@media (max-width: 900px) {
+  .custom-row { grid-template-columns: 1fr; }
+}
+.custom-form { display: grid; gap: 12px; }
+
+/* ===== Preview cards ===== */
+.preview-card {
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 12px; padding: 10px;
+  min-height: 180px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+
+/* Appeal preview */
+.preview-appeal .preview-img {
+  max-width: 120%; max-height: 360px; object-fit: contain;
+}
+
+/* System preview (video + chars) */
+.preview-system { height: 260px; }
+.preview-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; opacity: 0.9; filter: saturate(1.05);
+}
+.char {
+  position: absolute; bottom: 6px;
+  max-height: 85%; object-fit: contain;
+  image-rendering: auto;
+}
+.char-p1 { left: 8px; transform: translateY(0) scale(1); }
+.char-p2 { right: 8px; transform: translateY(0) scale(1); }
+
+@media (max-width: 600px) {
+  .preview-system { height: 200px; }
+  .char { max-height: 75%; }
+}
+
+/* (ya tenías estas) */
+.profile-page { display: grid; gap: 16px; max-width: 960px; margin: 0 auto; }
+.profile-title { margin: 0 0 6px; font-size: 22px; font-weight: 700; }
+.profile-user, .profile-linked { font-size: 14px; }
+.profile-loading { padding: 8px; }
+.profile-error { color: crimson; }
+
+.tabs { display: flex; gap: 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+.tab { appearance: none; border: none; background: transparent; padding: 8px 12px; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: 600; color: #e5e7eb; }
+.tab:hover { background: #1f2937; }
+.tab.active { background: #111827; color: #e5e7eb; }
+
+.card { border: 1px solid #374151; border-radius: 12px; padding: 16px; background: #0b1220; color: #e5e7eb; }
+.card-title { margin: 0 0 10px; font-size: 18px; }
+
+.form-grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; align-items: end; }
+@media (max-width: 780px) { .form-grid { grid-template-columns: 1fr; } }
+.form-field { display: grid; gap: 6px; }
+.form-label { font-size: 12px; color: #9ca3af; }
+.input, .select { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #4b5563; border-radius: 8px; font-size: 14px; background: #111827; color: #e5e7eb; }
+.input:focus, .select:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.15); }
+.hint { display: block; color: #9ca3af; font-size: 12px; margin-top: 4px; }
+
+.actions { margin-top: 12px; display: flex; align-items: center; gap: 12px; }
+.btn { padding: 8px 14px; border-radius: 10px; border: 1px solid #4b5563; background: #1f2937; color: #e5e7eb; cursor: pointer; font-weight: 600; }
+.btn:hover { background: #374151; }
+.btn.primary { border-color: transparent; background: #0ea5e9; color: #fff; }
+.btn.primary:hover { filter: brightness(0.95); }
+
+.msg { font-size: 14px; }
+.msg.ok { color: #16a34a; }
+.msg.error { color: #dc2626; }
+/* ===== System preview con video pequeño y chars en esquinas ===== */
+.preview-system { 
+  /* el alto lo determina la .stage; este contenedor solo centra */
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  height: auto; 
+  min-height: 180px;
+}
+
+/* El “escenario”: define el tamaño del video */
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 560px;      /* ancho máximo del preview */
+  aspect-ratio: 16 / 9;  /* mantiene proporción y altura */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+/* Video más pequeño dentro del stage */
+.stage-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* o 'contain' si prefieres ver todo el fondo */
+  z-index: 1;
+  opacity: 0.9;
+}
+
+/* Personajes por encima del video, en las esquinas */
+.char {
+  position: absolute;
+  bottom: 6px;
+  z-index: 2;            /* encima del video */
+  max-height: 100%;
+  max-width: 54%;
+  object-fit: contain;
+  image-rendering: auto;
+  pointer-events: none;  /* no bloquea clics en selects */
+}
+.char-p1 { left: 8px; }  /* esquina inferior izquierda */
+.char-p2 { right: 8px; } /* esquina inferior derecha */
+
+/* Responsive */
+@media (max-width: 600px) {
+  .stage { max-width: 100%; }
+  .char { max-width: 40%; max-height: 75%; }
+}
+/* ===== Lane previews (Single/Double) ===== */
+.preview-lane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+}
+
+.stage-lane {
+  position: relative;
+  width: 100%;
+  max-width: 560px;      /* ajusta el ancho del preview */
+  aspect-ratio: 16 / 9;  /* proporción del video */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  background: #000;      /* por si falla el video */
+}
+
+.lane-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* usa 'contain' si no quieres recorte */
+  pointer-events: none;
+}
+
+.lane-video.bg { 
+  z-index: 1; 
+  opacity: 0.95; 
+}
+
+/* Si tus MP4 de cover NO traen transparencia, puedes probar blend modes */
+.lane-video.cover { 
+  z-index: 2;
+  opacity: 0.95;
+  /* Si necesitas mezclar (covers con fondo negro), descomenta una:
+     mix-blend-mode: screen;
+     mix-blend-mode: lighten;
+  */
+}
+/* ===== Lane previews (Single/Double) ===== */
+.preview-lane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+}
+
+.stage-lane {
+  position: relative;
+  width: 100%;
+  max-width: 560px;      /* ajusta el ancho del preview */
+  aspect-ratio: 16 / 9;  /* proporción del área */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  background: #000;      /* por si falla el video base */
+}
+
+.lane-video,
+.lane-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.lane-video { object-fit: cover; }
+.lane-image { object-fit: cover; } /* usa contain si prefieres ver todo el PNG */
+
+.lane-video.base { z-index: 0; opacity: 0.95; }  /* Background (During Play) MP4 */
+.lane-image.bg   { z-index: 1; opacity: 0.95; }  /* Lane BG PNG */
+.lane-image.cover{ z-index: 2; opacity: 0.95; }  /* Lane Cover PNG */
+/* Ya tienes estos: .lane-image, .lane-video, .stage-lane, etc. */
+
+/* Cover SINGLE: visible solo la mitad inferior */
+.lane-image.cover.cover-single {
+  /* recorta el 50% superior, deja visible el 50% inferior */
+  clip-path: inset(50% 0 0 0);
+}
+
+/* Cover DOUBLE: completo (opcional, por claridad) */
+.lane-image.cover.cover-double {
+  clip-path: inset(0 0 0 0);
+}
+/* ===== Lane previews (base) ===== */
+.preview-lane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+}
+
+.stage-lane {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  background: #000;
+  /* Variables para el slot izquierdo */
+  --lane-left-margin: 10%;           /* margen desde el borde izquierdo */
+}
+
+.lane-video,
+.lane-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.lane-video { object-fit: cover; }
+.lane-image { object-fit: cover; }
+
+/* Z-index por capas cuando ocupan todo */
+.lane-video.base { z-index: 0; opacity: 0.95; }
+.lane-image.bg   { z-index: 1; opacity: 0.95; }
+.lane-image.cover{ z-index: 2; opacity: 0.95; }
+
+/* ===== SLOT IZQUIERDO para Lane (Single) ===== */
+.lane-slot.left {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--lane-left-margin);
+  /* Ocupa exactamente la mitad izquierda, dejando margen a la izquierda */
+  width: calc(50% - var(--lane-left-margin));
+  overflow: hidden;     /* recorta imágenes al slot */
+  z-index: 1;           /* por encima del video base */
+}
+
+/* Imágenes dentro del slot: usamos contain para respetar proporciones del PNG */
+.lane-slot.left .lane-image.in-slot {
+  object-fit: contain;  /* evita recortes dentro del slot */
+  z-index: inherit;     /* mantienen orden relativo (bg<cover) */
+}
+
+/* Cover SINGLE: solo 50% inferior dentro del slot (de abajo hacia arriba) */
+.lane-slot.left .lane-image.cover-half {
+  /* Oculta 50% superior del slot */
+  clip-path: inset(50% 0 0 0);
+}
+
+/* (Opcional) Si el PNG del BG debe “llenar” el slot sí o sí, usa cover:
+.lane-slot.left .lane-image.in-slot { object-fit: cover; }
+*/
+
+/* ===== System preview pequeño + chars en esquinas (por si no lo tenías) ===== */
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+.stage-video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0.9;
+}
+.char { position: absolute; bottom: 6px; z-index: 2; max-height: 85%; max-width: 34%; object-fit: contain; pointer-events: none; }
+.char-p1 { left: 8px; }
+.char-p2 { right: 8px; }
+
+/* ===== Lane previews (base) ===== */
+.preview-lane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+}
+
+.stage-lane {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  background: #000;
+  --lane-left-margin: 10%;           /* margen desde el borde izquierdo */
+}
+
+.lane-video,
+.lane-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.lane-video { object-fit: cover; }
+.lane-image { object-fit: cover; }
+
+.lane-video.base { z-index: 0; opacity: 0.95; }
+.lane-image.bg   { z-index: 1; opacity: 0.95; }
+.lane-image.cover{ z-index: 2; opacity: 0.95; }
+
+/* ===== SLOT IZQUIERDO (Single) ===== */
+.lane-slot.left {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--lane-left-margin);
+  width: calc(50% - var(--lane-left-margin));
+  overflow: hidden;
+  z-index: 1; /* sobre el video base */
+}
+
+/* IMG dentro del slot */
+.lane-slot.left .lane-image.in-slot {
+  object-fit: contain;  /* que se vea completo dentro del slot */
+}
+
+/* === Máscara del cover (Single) === */
+.cover-mask {
+  position: absolute;
+  inset: 0;           /* ocupa todo el slot */
+  z-index: 2;         /* por encima del BG del slot */
+  pointer-events: none;  /* la máscara no intercepta clicks */
+}
+
+/* Ventana visible (ajusta alto según el corte para que el cover quepa completo) */
+.cover-visible-window {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  /* height se setea inline: calc(100% - {cut}%) */
+}
+
+/* El cover dentro de la ventana visible */
+.cover-visible-window .lane-image.cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* que se vea completo dentro de la ventana visible */
+}
+
+/* Línea de corte (guía visual) */
+.cover-cut-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 0;
+  border-top: 2px dashed rgba(255,255,255,0.75);
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Hotspot para arrastrar el corte */
+.cover-slider-hotspot {
+  position: absolute;
+  inset: 0;
+  cursor: ns-resize;
+  z-index: 4;
+  background: transparent;
+  pointer-events: auto;
+}
+
+/* ===== System preview (video chico + chars en esquinas) ===== */
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+.stage-video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0.9;
+}
+.char { position: absolute; bottom: 6px; z-index: 2; max-height: 85%; max-width: 34%; object-fit: contain; pointer-events: none; }
+.char-p1 { left: 8px; }
+.char-p2 { right: 8px; }
+
+/* ===== Previews base ===== */
+.preview-lane { display:flex; align-items:center; justify-content:center; min-height:180px; }
+.stage-lane {
+  position:relative; width:100%; max-width:560px; aspect-ratio:16/9;
+  border-radius:10px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.35); background:#000;
+  --lane-left-margin: 10%; /* margen desde la orilla izquierda */
+}
+.lane-video, .lane-image { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+.lane-video{ object-fit:cover; } .lane-image{ object-fit:cover; }
+.lane-video.base{ z-index:0; opacity:.95; }
+.lane-image.bg{ z-index:1; opacity:.85; }
+.lane-image.cover{ z-index:2; opacity:.95; }
+
+/* ===== Slot izquierdo para SINGLE ===== */
+.lane-slot.left{
+  position:absolute; top:0; bottom:0; left:var(--lane-left-margin);
+  width:calc(50% - var(--lane-left-margin)); overflow:hidden; z-index:1;
+}
+.lane-slot.left .lane-image.in-slot{ object-fit:contain; }
+
+/* ===== Cover como CORTINA (altura fija 50%, se mueve verticalmente con 'top') ===== */
+.cover-curtain{
+  position:absolute; left:0; right:0; height:95%;
+  /* El "top" se setea inline desde React: style={{ top: `${curtainTop}%` }} */
+  overflow:hidden; z-index:2; cursor:ns-resize; pointer-events:auto; /* captura drag */
+}
+.cover-curtain .lane-image.in-curtain{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:contain; pointer-events:none;
+}
+
+/* Línea/handler de la cortina (parte superior del rectángulo) */
+.curtain-handle{ position:absolute; left:0; right:0; top:0; height:12px; z-index:3; pointer-events:none; }
+.curtain-handle-line{ position:absolute; left:0; right:0; top:0; border-top:2px dashed rgba(255,255,255,.8); }
+
+/* ===== System preview (video + chars) ===== */
+.stage{ position:relative; width:100%; max-width:560px; aspect-ratio:16/9; border-radius:10px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,.35); }
+.stage-video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; opacity:.9; }
+.char{ position:absolute; bottom:6px; z-index:2; max-height:85%; max-width:34%; object-fit:contain; pointer-events:none; }
+.char-p1{ left:8px; } .char-p2{ right:8px; }
+
+/* ===== Lane previews ===== */
+.preview-lane {
+  display:flex; align-items:center; justify-content:center;
+  min-height:180px;
+}
+.stage-lane {
+  position:relative; width:100%; max-width:560px; aspect-ratio:16/9;
+  border-radius:10px; overflow:hidden;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);
+  background:#000;
+  --lane-left-margin:5%;
+  --lane-double-inset:0%;
+}
+.lane-video, .lane-image {
+  position:absolute; inset:0; width:100%; height:100%; pointer-events:none;
+}
+.lane-video{ object-fit:cover; }
+.lane-image{ object-fit:cover; }
+.lane-video.base{ z-index:0; opacity:.95; }
+.lane-image.bg{ z-index:1; opacity:.95; }
+.lane-image.cover{ z-index:2; opacity:.95; }
+
+/* Slot izquierdo (Single) */
+.lane-slot.left {
+  position:absolute; top:0; bottom:0; left:var(--lane-left-margin);
+  width:calc(50% - var(--lane-left-margin));
+  overflow:hidden; z-index:1;
+}
+.lane-slot.left .lane-image.in-slot { object-fit:contain; }
+
+/* Slot con marco 15% (Double) */
+.lane-slot.double {
+  position:absolute;
+  inset: var(--lane-double-inset);
+  overflow:hidden; z-index:1;
+}
+.lane-slot.double .lane-image.in-slot { object-fit:contain; }
+
+/* Cortina reutilizable */
+.cover-curtain {
+  position:absolute; left:0; right:0; height:95%;
+  overflow:hidden; z-index:2;
+  cursor:ns-resize; pointer-events:auto;
+}
+.cover-curtain .lane-image.in-curtain {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:contain; pointer-events:none;
+}
+.curtain-handle{ position:absolute; left:0; right:0; top:0; height:12px; z-index:3; }
+.curtain-handle-line{ border-top:2px dashed rgba(255,255,255,.8); }

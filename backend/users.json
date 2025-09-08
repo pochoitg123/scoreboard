@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "id": "4eccd781-0178-4dbb-b3b6-5cb0615892bf",
+      "username": "POCHO",
+      "email": "pochoitg@gmail.com",
+      "password_hash": "$2b$12$g8FugRmstf2JY.zTgIlbo.pUI3zllghzPNWQo5S9oUXRWcgLBp.TG",
+      "linked": {
+        "dancerName": "POCHO",
+        "__refid": "AA6BD8945A64572E",
+        "pcbid": null
+      },
+      "reset_tokens": []
+    }
+  ]
+}

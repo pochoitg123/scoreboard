@@ -1,0 +1,35 @@
+/* src/styles.css */
+
+/* Importante: define tus variables de fuente aquí */
+:root {
+  --font-ui: "OutfitVariable", "Outfit Variable", Outfit, system-ui, -apple-system,
+             "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+             "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+
+  --font-heading: "Rajdhani", "OutfitVariable", system-ui, sans-serif;
+
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+               Consolas, "Liberation Mono", monospace;
+}
+
+/* Aplica por defecto a toda la app */
+html, body, #root {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  color: #0f172a; /* tu color base actual */
+  height: 100%;
+}
+
+/* Títulos / badges / tabs si quieres darles un look marcado */
+.hdg, .badge, .tab {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: .3px;
+  text-transform: none; /* cámbialo a uppercase si te gusta */
+}
+
+/* Números (scores) consistentes */
+.num, .mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums lining-nums;
+}

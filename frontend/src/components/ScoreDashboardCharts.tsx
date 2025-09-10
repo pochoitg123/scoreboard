@@ -1,10 +1,20 @@
 // frontend/src/components/ScoreDashboardCharts.tsx
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import type { ScoreRow } from "../api/client";
 import {
   ResponsiveContainer,
   PieChart, Pie, Cell, Tooltip as PieTooltip,
 } from "recharts";
+
+import { fetchSongRanking, type SongRankingResponse } from "../api/client";
+import RankingModal from "./RankingModal";
+import {
+  Icon,
+  clearIconNames,
+  rankIconNames,
+  getRankLabel,
+  getClearLabel,
+} from "../utils/icons";
 
 /* ========================= Helpers ========================= */
 
@@ -101,6 +111,8 @@ function getSongImage(s: ScoreRow): string | null {
 
 type Props = {
   scores: ScoreRow[];
+  /** Opcional: lista completa de intentos (sin dedupe) para ponderar correctamente el Top */
+  allScores?: ScoreRow[];
   loading?: boolean;
 };
 
@@ -121,32 +133,46 @@ function iconSizeFrom(value: number, maxVal: number, minPx = 48, maxPx = 160) {
 
 /* ========================= Component ========================= */
 
-export default function ScoreDashboardCharts({ scores, loading }: Props) {
-  // Top por jugadas (con imagen)
+export default function ScoreDashboardCharts({ scores, allScores, loading }: Props) {
+  // ===== Top por canción ponderado por repeticiones (1+2+...+n)
   const topSongs = useMemo(() => {
     type Row = { key: string; name: string; value: number; img?: string | null };
-    const acc: Record<string, Row> = {};
-    for (const s of scores) {
-      const key = String(s.songId ?? getSongTitle(s));
-      if (!acc[key]) {
-        acc[key] = { key, name: getSongTitle(s), value: 0, img: getSongImage(s) };
-      }
-      acc[key].value += 1;
+
+    // Si te pasan allScores (sin dedupe), úsalo; si no, usa scores
+    const base = (Array.isArray(allScores) && allScores.length > 0) ? allScores : scores;
+
+    // Conteo de repeticiones por canción
+    const counts = new Map<string, { name: string; img?: string | null; n: number }>();
+
+    for (const s of base) {
+      const key = String(s.songId ?? getSongTitle(s));   // <-- SOLO por canción
+      const name = getSongTitle(s);
+      const img = getSongImage(s);
+
+      const prev = counts.get(key);
+      counts.set(key, { name, img, n: (prev?.n ?? 0) + 1 });
     }
-    return Object.values(acc)
-      .sort((a, b) => b.value - a.value)
-      .slice(0, TOP_N);
-  }, [scores]);
+
+    // Ponderación: n*(n+1)/2 (la 2ª vez suma +2, la 3ª +3, etc.)
+    const rows: Row[] = [];
+    for (const [key, { name, img, n }] of counts) {
+      const weight = (n * (n + 1)) / 2;
+      rows.push({ key, name, value: weight, img });
+    }
+
+    return rows.sort((a, b) => b.value - a.value).slice(0, TOP_N);
+  }, [scores, allScores]);
 
   const maxVal = useMemo(
     () => topSongs.reduce((m, r) => Math.max(m, r.value), 0),
     [topSongs]
   );
 
-  // Pie: distribución por dificultad
-  const byDiff = useMemo(() => {
+  // ===== Pie: distribución por dificultad (separado S/D)
+  const byDiffSingle = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const s of scores) {
+      if (getMode(s) !== "S") continue; // solo Single
       const label = getDiffText(s);
       counts[label] = (counts[label] ?? 0) + 1;
     }
@@ -155,7 +181,19 @@ export default function ScoreDashboardCharts({ scores, loading }: Props) {
       .sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
   }, [scores]);
 
-  // Lista: jugadas recientes (con score)
+  const byDiffDouble = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const s of scores) {
+      if (getMode(s) !== "D") continue; // solo Double
+      const label = getDiffText(s);
+      counts[label] = (counts[label] ?? 0) + 1;
+    }
+    return Object.entries(counts)
+      .map(([label, value]) => ({ label, value }))
+      .sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
+  }, [scores]);
+
+  // ===== Lista: jugadas recientes (con score, dancer, rank/clear)
   const recent = useMemo(() => {
     const copy = scores.map((s) => ({
       ...s,
@@ -169,11 +207,31 @@ export default function ScoreDashboardCharts({ scores, loading }: Props) {
     return copy.slice(0, 12);
   }, [scores]);
 
+  // ===== Modal ranking =====
+  const [open, setOpen] = useState(false);
+  const [selSong, setSelSong] = useState<{ songId: number | string; title: string; cover: string } | null>(null);
+  const [ranking, setRanking] = useState<SongRankingResponse | null>(null);
+  const [loadingRank, setLoadingRank] = useState(false);
+
+  async function openRanking(s: ScoreRow) {
+    const title = getSongTitle(s);
+    const cover = getSongImage(s) || "/songs/_missing.png";
+    setSelSong({ songId: s.songId as any, title, cover });
+    setOpen(true);
+    setLoadingRank(true);
+    try {
+      const data = await fetchSongRanking(s.songId as any, { source: "score3", limit: 5 });
+      setRanking(data);
+    } finally {
+      setLoadingRank(false);
+    }
+  }
+
   return (
     <div className="section">
       {loading && <div>Cargando datos…</div>}
 
-      {/* Mosaico de imágenes escaladas por popularidad */}
+      {/* Mosaico de imágenes escaladas por popularidad (ponderado) */}
       <div className="card">
         <h3 className="h3">Canciones más jugadas (Top {TOP_N})</h3>
 
@@ -193,7 +251,7 @@ export default function ScoreDashboardCharts({ scores, loading }: Props) {
             return (
               <div
                 key={s.key ?? i}
-                title={`${s.name} — ${s.value} veces`}
+                title={`${s.name}  ${s.value}`}
                 style={{
                   width: size,
                   height: size,
@@ -211,7 +269,7 @@ export default function ScoreDashboardCharts({ scores, loading }: Props) {
                     style={{
                       width: "100%",
                       height: "100%",
-                      objectFit: "cover", // conserva relación de aspecto llenando el cuadro
+                      objectFit: "cover",
                       display: "block",
                     }}
                     draggable={false}
@@ -232,7 +290,7 @@ export default function ScoreDashboardCharts({ scores, loading }: Props) {
                   </div>
                 )}
 
-                {/* Badge inferior con veces */}
+                {/* Badge inferior con valor ponderado */}
                 <div
                   style={{
                     position: "absolute",
@@ -255,65 +313,132 @@ export default function ScoreDashboardCharts({ scores, loading }: Props) {
         </div>
 
         <div style={{ textAlign: "center", opacity: 0.8, fontSize: 12, marginTop: 6 }}>
-          *El tamaño de cada portada refleja su número de jugadas (escala √).
+          
         </div>
       </div>
 
-      {/* Grid 2 columnas: Pie + Recientes */}
+      {/* Grid 2 columnas: (izq) dos pies apilados  (der) recientes */}
       <div className="grid-2">
-        <div className="card">
-          <h3 className="h3">Distribución por dificultad</h3>
-          <div className="chart chart--lg">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={byDiff} dataKey="value" nameKey="label" outerRadius={110}>
-                  {byDiff.map((_, i) => (
-                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-                <PieTooltip />
-              </PieChart>
-            </ResponsiveContainer>
+        <div className="stack">
+          <div className="card">
+            <h3 className="h3">Distribución por dificultad (Single)</h3>
+            <div className="chart chart--lg">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={byDiffSingle} dataKey="value" nameKey="label" outerRadius={110}>
+                    {byDiffSingle.map((_, i) => (
+                      <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <PieTooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="card">
+            <h3 className="h3">Distribución por dificultad (Double)</h3>
+            <div className="chart chart--lg">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={byDiffDouble} dataKey="value" nameKey="label" outerRadius={110}>
+                    {byDiffDouble.map((_, i) => (
+                      <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <PieTooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 
         <div className="card">
           <h3 className="h3">Jugadas recientemente</h3>
           <ul className="list">
-            {recent.map((s: any, idx: number) => (
-              <li key={idx} className="list-item">
-                <div className="title-wrap">
-                  <div className="title">{getSongTitle(s)}</div>
-                  <div className="meta">{getDiffText(s)}</div>
-                </div>
-                <div className="meta">
-                  {/* Fecha */}
-                  <span style={{ marginRight: 8 }}>
-                    {s._ts ? new Date(s._ts).toLocaleString() : "sin fecha"}
-                  </span>
-                  {/* Score */}
-                  {typeof s.score === "number" && (
-                    <span title="Score">• Score: {s.score.toLocaleString()}</span>
-                  )}
-                </div>
-              </li>
-            ))}
+            {recent.map((s: any, idx: number) => {
+              const rankLbl = getRankLabel((s as any).rank);
+              const clearLbl = getClearLabel(s.clearKind);
+              return (
+                <li
+                  key={idx}
+                  className="list-item"
+                  onClick={() => openRanking(s)}
+                  title="Ver ranking de la canción"
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="title-wrap">
+                    <div className="title">{getSongTitle(s)}</div>
+                    <div className="meta">{getDiffText(s)}</div>
+                  </div>
+
+                  <div className="meta" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    {/* Fecha */}
+                    <span style={{ marginRight: 4 }}>
+                      {s._ts ? new Date(s._ts).toLocaleString() : "sin fecha"}
+                    </span>
+
+                    {/* Dancer */}
+                    {s.dancerName && <span>• {s.dancerName}</span>}
+
+                    {/* Score */}
+                    {typeof s.score === "number" && (
+                      <span title="Score">• {s.score.toLocaleString()}</span>
+                    )}
+
+                    {/* Rank/Clear con íconos */}
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                      <span title={rankLbl} style={iconBadgeSm as React.CSSProperties}>
+                        <Icon names={rankIconNames((s as any).rank)} size={14} />
+                      </span>
+                      <span title={clearLbl} style={iconBadgeSm as React.CSSProperties}>
+                        <Icon names={clearIconNames(s.clearKind)} size={14} spin speedMs={900} />
+                      </span>
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
+
+      {/* Modal Ranking */}
+      <RankingModal
+        open={open}
+        onClose={() => setOpen(false)}
+        song={selSong}
+        ranking={ranking}
+        loading={loadingRank}
+      />
 
       {/* Sugerencia de estilos mínimos (opcional, puedes moverlos a tu CSS global) */}
       <style>{`
         .h3 { margin: 0 0 8px; }
         .card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 16px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .stack { display: flex; flex-direction: column; gap: 16px; }
+        .chart { width: 100%; height: 300px; } /* altura consistente para ambos pies */
         .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 12px; background: #0b1220; border: 1px solid #1f2937; }
         .title-wrap { display: flex; align-items: baseline; gap: 8px; }
         .title { font-weight: 700; }
         .meta { opacity: .85; font-size: 12px; }
-        @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) {
+          .grid-2 { grid-template-columns: 1fr; }
+        }
       `}</style>
     </div>
   );
 }
+
+// badge pequeño para íconos en la lista
+const iconBadgeSm: React.CSSProperties = {
+  width: 22,
+  height: 22,
+  display: "grid",
+  placeItems: "center",
+  borderRadius: 6,
+  border: "1px solid #334155",
+  background: "#0b1220",
+};

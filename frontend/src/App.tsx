@@ -11,8 +11,6 @@ import { fetchScores, type ScoreRow } from "./api/client";
 import { getMe, logout } from "./api/auth";
 import ScoreDashboardCharts from "./components/ScoreDashboardCharts";
 
-
-
 export default function App() {
   const [scores, setScores] = useState<ScoreRow[]>([]);
   const [loading, setLoading] = useState(false);
@@ -60,9 +58,11 @@ export default function App() {
       <nav className="navbar">
         <div className="navbar-inner">
           <div className="tabs">
-            <TabLink to="/">Inicio</TabLink>
+            {/* Resumen = Dashboard (ruta /) */}
+            <TabLink to="/">Resumen</TabLink>
             <TabLink to="/scores">Scores</TabLink>
-            <TabLink to="/dashboard">Dashboard</TabLink>
+            <TabLink to="/dancers">Dancers</TabLink>
+            {/* No mostramos una pestaña "Dashboard" para no duplicar, pero la ruta /dashboard sigue viva */}
           </div>
           <div className="ml-auto row">
             {user ? (
@@ -86,12 +86,26 @@ export default function App() {
         </div>
       </nav>
 
-
       <div className="container">
         {err && <div style={{ color: "red", marginBottom: 12 }}>{err}</div>}
 
         <Routes>
-          <Route path="/" element={<DancersHome />} />
+          {/* Resumen/Dashboard como pantalla principal */}
+          <Route
+            path="/"
+            element={<ScoreDashboardCharts scores={scores} loading={loading} />}
+          />
+
+          {/* Alias: /dashboard es lo mismo que "/" */}
+          <Route
+            path="/dashboard"
+            element={<ScoreDashboardCharts scores={scores} loading={loading} />}
+          />
+
+          {/* DancersHome ahora vive en /dancers para no perderlo */}
+          <Route path="/dancers" element={<DancersHome />} />
+
+          {/* Vista "scores" con el tablero de tarjetas por jugador */}
           <Route
             path="/scores"
             element={
@@ -102,10 +116,7 @@ export default function App() {
               )
             }
           />
-          <Route
-          path="/dashboard"
-          element={<ScoreDashboardCharts scores={scores} loading={loading} />}
-          />
+
           <Route
             path="/login"
             element={

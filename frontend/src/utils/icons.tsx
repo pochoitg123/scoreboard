@@ -140,35 +140,35 @@ export function clearIconNames(ck?: number | null): string[] {
     case 7:  return ["clear_fc", "fc", "7"];
     case 6:
     case 5:
-    case 4:  return ["clear_life4", "life4", String(ck ?? "")];
-    case 3:  return ["clear_clear", "clear", "3"];
-    case 2:  return ["clear_assist", "assist", "2"];
-    case 1:  return ["clear_fail", "fail", "1"];
+    case 4:  return [];
+    case 3:  return [];
+    case 1:  return [];
     default: return ["clear_default", "default", String(ck ?? "")];
   }
 }
 
 export function rankIconNames(rankIdx?: number | null): string[] {
   switch (rankIdx) {
-    case 0:  return ["rank_aaa", "aaa", "0"];
-    case 1:  return ["rank_aa_plus", "aa_plus", "1"];
-    case 2:  return ["rank_aa", "aa", "2"];
-    case 3:  return ["rank_aa_minus", "aa_minus", "3"];
-    case 4:  return ["rank_a_plus", "a_plus", "4"];
-    case 5:  return ["rank_a", "a", "5"];
-    case 6:  return ["rank_a_minus", "a_minus", "6"];
-    case 7:  return ["rank_b_plus", "b_plus", "7"];
-    case 8:  return ["rank_b", "b", "8"];
-    case 9:  return ["rank_b_minus", "b_minus", "9"];
-    case 10: return ["rank_c_plus", "c_plus", "10"];
-    case 11: return ["rank_c", "c", "11"];
-    case 12: return ["rank_c_minus", "c_minus", "12"];
-    case 13: return ["rank_d_plus", "d_plus", "13"];
-    case 14: return ["rank_d", "d", "14"];
-    case 15: return ["rank_e", "e", "15"];
-    default: return ["rank_none", "none", String(rankIdx ?? "")];
+    case 0:  return ["rank0", "aaa"];
+    case 1:  return ["rank1", "aa_plus"];
+    case 2:  return ["rank2", "aa"];
+    case 3:  return ["rank3", "aa_minus"];
+    case 4:  return ["rank4", "a_plus"];
+    case 5:  return ["rank5", "a"];
+    case 6:  return ["rank6", "a_minus"];
+    case 7:  return ["rank7", "b_plus"];
+    case 8:  return ["rank8", "b"];
+    case 9:  return ["rank9", "b_minus"];
+    case 10: return ["rank10", "c_plus"];
+    case 11: return ["rank11", "c"];
+    case 12: return ["rank12", "c_minus"];
+    case 13: return ["rank13", "d_plus"];
+    case 14: return ["rank14", "d"];
+    case 15: return ["rank15", "e"];
+    default: return ["rank_none", "none"];
   }
 }
+
 
 /* ===== Labels ===== */
 const RANK_LABELS = ["AAA","AA+","AA","AA-","A+","A","A-","B+","B","B-","C+","C","C-","D+","D","E","-"] as const;

@@ -12,7 +12,15 @@ import {
   getClearLabel,
   publicUrl,
 } from "../utils/icons";
-import ScoreDashboardCharts from "@/components/ScoreDashboardCharts";
+
+/* ===== Helpers de título de canción ===== */
+function getSongTitle(s: ScoreRow): string {
+  return (
+    (s.songMeta as any)?.title ||
+    s.songMeta?.name ||
+    String(s.songId ?? "Song")
+  );
+}
 
 /* ===== Query param helper ===== */
 function useQuery() {
@@ -164,6 +172,10 @@ export default function ScoreDashboard({ initialScores }: { initialScores: Score
     if (dancerFromQuery) setFilterDancer(dancerFromQuery);
   }, [dancerFromQuery]);
 
+  // búsqueda por canción
+  const [q, setQ] = useState<string>("");
+  
+
   // series (multi-select)
   const seriesInData = useMemo(() => {
     const set = new Set<number>();
@@ -183,16 +195,26 @@ export default function ScoreDashboard({ initialScores }: { initialScores: Score
   }
 
   // aplicar filtros
+// aplicar filtros (con búsqueda por canción)
   const filtered = useMemo(() => {
+    const qNorm = q.trim().toLowerCase();
+  
     return deduped.filter(s => {
       if (filterDancer && (s.dancerName || "UNKNOWN") !== filterDancer) return false;
+    
       if (seriesSel.length > 0) {
         const sn = (s.songMeta as any)?.series;
         if (typeof sn !== "number" || !seriesSel.includes(sn)) return false;
       }
+    
+      if (qNorm) {
+        const title = getSongTitle(s).toLowerCase();
+        if (!title.includes(qNorm)) return false;
+      }
+    
       return true;
     });
-  }, [deduped, filterDancer, seriesSel]);
+  }, [deduped, filterDancer, seriesSel, q]);
 
   const scores = useMemo(
     () => [...filtered].sort((a, b) => (b.score ?? 0) - (a.score ?? 0)),
@@ -257,6 +279,25 @@ export default function ScoreDashboard({ initialScores }: { initialScores: Score
           {scores.length} resultados
         </div>
       </div>
+      <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        Canción
+        <input
+          type="text"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Buscar canción…"
+          style={{
+            height: 32,
+            padding: "0 10px",
+            borderRadius: 8,
+            border: "1px solid #cbd5e1",
+            outline: "none",
+          }}
+        />
+      </label>
+
+
+
 
       {/* Filtro por series */}
       <div style={seriesBar}>
@@ -280,7 +321,7 @@ export default function ScoreDashboard({ initialScores }: { initialScores: Score
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-          gap: 18,
+          gap: 12,
         }}
       >
         {scores.map((s, idx) => {

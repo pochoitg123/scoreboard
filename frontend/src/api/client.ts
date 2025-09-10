@@ -2,6 +2,12 @@ import axios from "axios";
 
 // ===== Tipos =====
 export type ScoreRow = {
+  date: any;
+  playedAt: any;
+  chartType: string;
+  level: number;
+  songTitle: any;
+  title: any;
   songId: number;
   mode: "S" | "D";
   difficulty: number;

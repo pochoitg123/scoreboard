@@ -1,0 +1,158 @@
+/* frontend/src/components/judgments.css */
+
+.judg-wrap {
+  padding: 1.5rem;
+  display: grid;
+  gap: 1.5rem;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.judg-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+  position: relative;
+}
+.judg-title::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  margin-top: 6px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #0ea5e9, #0284c7);
+  animation: slideIn 0.6s ease-in-out;
+}
+
+.judg-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+.judg-chip {
+  appearance: none;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  border-radius: 999px;
+  padding: .45rem 1rem;
+  font-weight: 600;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: all .25s ease;
+}
+.judg-chip:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  background: #f1f5f9;
+}
+.judg-chip.is-active {
+  background: linear-gradient(90deg, #0ea5e9, #0284c7);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(14,165,233,.4);
+}
+
+.judg-error { 
+  color: #dc2626; 
+  font-weight: 600;
+  animation: shake 0.3s ease-in-out;
+}
+
+.judg-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+  gap: 1rem;
+}
+
+.judg-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1rem;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.judg-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.1);
+}
+.judg-card-label { 
+  color: #64748b; 
+  font-size: .85rem;
+}
+.judg-card-value { 
+  font-size: 1.5rem; 
+  font-weight: 800; 
+}
+
+.judg-table-wrap { 
+  overflow: auto; 
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+.judg-table {
+  width: 100%;
+  min-width: 960px;
+  border-collapse: collapse;
+  background: #fff;
+}
+.judg-th {
+  text-align: left;
+  padding: .8rem 1rem;
+  border-bottom: 2px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.judg-td {
+  padding: .7rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background .2s ease;
+}
+.judg-td:hover {
+  background: #f9fafb;
+}
+
+.judg-code {
+  font-size: .72rem;
+  color: #475569;
+  background: #f1f5f9;
+  border-radius: 6px;
+  padding: .15rem .35rem;
+}
+
+.judg-loading, .judg-empty {
+  padding: 1rem;
+  color: #475569;
+  font-style: italic;
+  animation: pulse 1.2s infinite;
+}
+
+/* Colores DDR/PIU */
+.judg-marv { color: #FFD700; font-weight: 700; text-shadow: 0 0 4px rgba(255,215,0,.6); }
+.judg-perf { color: #FFA500; font-weight: 700; text-shadow: 0 0 4px rgba(255,165,0,.6); }
+.judg-great { color: #32CD32; font-weight: 700; text-shadow: 0 0 4px rgba(50,205,50,.6); }
+.judg-good { color: #1E90FF; font-weight: 700; text-shadow: 0 0 4px rgba(30,144,255,.6); }
+.judg-miss { color: #DC2626; font-weight: 700; text-shadow: 0 0 4px rgba(220,38,38,.6); }
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { width: 0; opacity: 0; }
+  to { width: 60px; opacity: 1; }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+@keyframes pulse {
+  0%,100% { opacity: .6; }
+  50% { opacity: 1; }
+}

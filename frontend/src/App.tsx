@@ -11,6 +11,9 @@ import { fetchScores, type ScoreRow } from "./api/client";
 import { getMe, logout } from "./api/auth";
 import ScoreDashboardCharts from "./components/ScoreDashboardCharts";
 
+// 👇 NUEVO: importar la página de juicios
+import JudgmentStats from "./components/JudgmentStats";
+
 export default function App() {
   const [scores, setScores] = useState<ScoreRow[]>([]);
   const [loading, setLoading] = useState(false);
@@ -62,6 +65,8 @@ export default function App() {
             <TabLink to="/">Resumen</TabLink>
             <TabLink to="/scores">Scores</TabLink>
             <TabLink to="/dancers">Dancers</TabLink>
+            {/* 👇 NUEVO: pestaña Juicios */}
+            <TabLink to="/judgments">Juicios</TabLink>
             {/* No mostramos una pestaña "Dashboard" para no duplicar, pero la ruta /dashboard sigue viva */}
           </div>
           <div className="ml-auto row">
@@ -116,6 +121,9 @@ export default function App() {
               )
             }
           />
+
+          {/* 👇 NUEVO: ruta Juicios */}
+          <Route path="/judgments" element={<JudgmentStats />} />
 
           <Route
             path="/login"

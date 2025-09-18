@@ -1,3 +1,4 @@
+// frontend/src/components/DancersHome.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,19 +12,15 @@ import "./DancersHome.css";
 
 /* ================== Tipos ================== */
 type SongRow = {
-  mcode: number;        // id de canción (coincide con songId en scores)
-  series: number;       // número de serie DDR
-  title?: string;       // opcional
-  basename?: string;    // opcional
-  diffLv?: number[];    // [S-BGN(0),S-BAS(1),S-DIF(2),S-EXP(3),S-CHA(4), D-BGN(5),D-BAS(6),D-DIF(7),D-EXP(8),D-CHA(9)]
+  mcode: number;
+  series: number;
+  title?: string;
+  basename?: string;
+  diffLv?: number[];
 };
 
 type Tier = "gold" | "green" | "blue" | "none";
 
-/** Vistas disponibles:
- * Single: BSP, DSP, ESP, CSP, SP (cualquiera en Single)
- * Double: BDP, DDP, EDP, CDP, DP (cualquiera en Double)
- */
 type View =
   | "BSP" | "DSP" | "ESP" | "CSP" | "SP"
   | "BDP" | "DDP" | "EDP" | "CDP" | "DP";
@@ -31,64 +28,55 @@ type View =
 type Badge = {
   series: number;
   tier: Tier;
-  done: number;          // cuántas alcanzan FC/GFC/PFC según la vista
-  total: number;         // total de canciones con el/los charts de la vista
-  missing: string[];     // títulos que no llegan a FC en la vista
-  completed: string[];   // títulos completados con etiqueta (FC/GFC/PFC) en la vista
-  started: boolean;      // tiene algún score en esa vista (para gris/inactive)
-  gfcButNoPfc?: string[]; // cuando tier=green: canciones que faltan PFC
+  done: number;
+  total: number;
+  missing: string[];
+  completed: string[];
+  started: boolean;
+  gfcButNoPfc?: string[];
 };
 
 /* ================== Utilidades ================== */
-
-/** Carga songs.json robusto */
 async function loadSongs(): Promise<SongRow[]> {
   try {
-    const mod: any = await import("../data/songs.json");
+    const mod: any = await import("../data/songslogros.json");
     const data = (mod?.default ?? mod) as SongRow[];
     if (Array.isArray(data) && data.length) return data;
-  } catch { /* fallback */ }
+  } catch {}
   try {
     const r = await fetch("/songs.json", { cache: "no-store" });
     if (!r.ok) throw new Error("HTTP " + r.status);
     const data = (await r.json()) as SongRow[];
     if (Array.isArray(data)) return data;
-  } catch { /* vacío */ }
+  } catch {}
   return [];
 }
 
-/** ¿La vista es Double? */
 function isDoubleView(view: View): boolean {
   return ["BDP", "DDP", "EDP", "CDP", "DP"].includes(view);
 }
 
-/** Índice de diff en diffLv para cada vista (o null si es “cualquiera” del grupo) */
 function diffIndexFor(view: View): number | null {
   switch (view) {
-    // Single
     case "BSP": return 1;
     case "DSP": return 2;
     case "ESP": return 3;
     case "CSP": return 4;
-    case "SP":  return null; // cualquier Single [0..4]
-    // Double
+    case "SP":  return null;
     case "BDP": return 6;
     case "DDP": return 7;
     case "EDP": return 8;
     case "CDP": return 9;
-    case "DP":  return null; // cualquier Double [5..9]
+    case "DP":  return null;
   }
 }
 
-/** ¿El SongRow tiene chart disponible para la vista? */
 function songHasChartForView(s: SongRow, view: View): boolean {
   const idx = diffIndexFor(view);
   if (!Array.isArray(s.diffLv)) return false;
-
   if (idx !== null) {
     return s.diffLv.length > idx && typeof s.diffLv[idx] === "number" && s.diffLv[idx] > 0;
   }
-  // SP = cualquier Single 0..4 ; DP = cualquier Double 5..9
   const [from, to] = isDoubleView(view) ? [5, 9] : [0, 4];
   for (let i = from; i <= to; i++) {
     if (typeof s.diffLv[i] === "number" && s.diffLv[i] > 0) return true;
@@ -96,7 +84,6 @@ function songHasChartForView(s: SongRow, view: View): boolean {
   return false;
 }
 
-/** Mapa serie -> canciones aplicables para la vista */
 function buildSeriesMapForView(songs: SongRow[], view: View): Map<number, SongRow[]> {
   const map = new Map<number, SongRow[]>();
   for (const s of songs) {
@@ -107,7 +94,6 @@ function buildSeriesMapForView(songs: SongRow[], view: View): Map<number, SongRo
   return map;
 }
 
-/** Dado el view, cuáles diffs consideramos */
 function allowedDiffs(view: View): number[] {
   if (view === "SP") return [0, 1, 2, 3, 4];
   if (view === "DP") return [5, 6, 7, 8, 9];
@@ -123,7 +109,6 @@ function allowedDiffs(view: View): number[] {
   }
 }
 
-/** Mejor clearKind por mcode, filtrando por Single/Double y diffs permitidos */
 function bestClearByMcode(scores: ScoreRow[], view: View): Map<number, number> {
   const best = new Map<number, number>();
   const allow = new Set(allowedDiffs(view));
@@ -153,7 +138,6 @@ function songLabel(s: SongRow): string {
 }
 
 /* ================== Componente principal ================== */
-
 export default function DancersHome() {
   const [rows, setRows] = useState<DancerSummaryRow[]>([]);
   const [loading, setLoading] = useState(false);
@@ -186,8 +170,8 @@ export default function DancersHome() {
 
   return (
     <div className="dh-wrap">
-      <h1 className="dh-title">Resumen por jugador</h1>
-      <div className="dh-subtitle"></div>
+      <h1 className="dh-title">Resumen de Dancers</h1>
+      <p className="dh-subtitle">Explora perfiles, logros y progreso.</p>
 
       <input
         placeholder="Buscar jugador…"
@@ -205,8 +189,8 @@ export default function DancersHome() {
         <div className="dh-muted">No hay jugadores que coincidan con “{filter}”</div>
       ) : (
         <div className="dh-grid">
-          {filtered.map((r) => (
-            <div key={r.dancerName} className="dh-card">
+          {filtered.map((r, i) => (
+            <div key={r.dancerName} className="dh-card" style={{ animationDelay: `${i * 40}ms` }}>
               <div className="dh-card-name">{r.dancerName}</div>
 
               <div className="dh-stats">
@@ -235,7 +219,6 @@ export default function DancersHome() {
 }
 
 /* ================== Subcomponentes ================== */
-
 function Stat({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div className="dh-stat">
@@ -246,7 +229,7 @@ function Stat({ label, value, color }: { label: string; value: number; color: st
 }
 
 function SeriesBadges({ dancerName }: { dancerName: string }) {
-  const [view, setView] = useState<View>("ESP"); // ← ESP por defecto
+  const [view, setView] = useState<View>("ESP");
   const [badges, setBadges] = useState<Badge[] | null>(null);
   const [open, setOpen] = useState<Badge | null>(null);
   const [warn, setWarn] = useState<string | null>(null);
@@ -269,8 +252,6 @@ function SeriesBadges({ dancerName }: { dancerName: string }) {
 
         for (const [series, seriesSongs] of entries) {
           const total = seriesSongs.length;
-
-          // “started”: ¿tiene algún score en la vista (S ó D) para la serie?
           const started = seriesSongs.some((s) => best.has(s.mcode));
 
           let doneFC = 0;
@@ -295,11 +276,6 @@ function SeriesBadges({ dancerName }: { dancerName: string }) {
             }
           }
 
-          // Tiers:
-          // - gold: todas ≥ PFC
-          // - green: todas ≥ GFC (pero no todas PFC)
-          // - blue:  todas ≥ FC (pero no todas GFC)
-          // - none:  de lo contrario
           let tier: Tier = "none";
           if (total > 0) {
             const allPFC = seriesSongs.every((s) => (best.get(s.mcode) ?? -1) >= 9);
@@ -336,7 +312,6 @@ function SeriesBadges({ dancerName }: { dancerName: string }) {
 
   if (!badges) return <div className="dh-muted-mini">Calculando insignias…</div>;
 
-  // Bloques de toggles: Single y Double
   const singleViews: View[] = ["ESP", "DSP", "BSP", "CSP", "SP"];
   const doubleViews: View[] = ["BDP", "DDP", "EDP", "CDP", "DP"];
 
@@ -352,13 +327,6 @@ function SeriesBadges({ dancerName }: { dancerName: string }) {
               className={`dh-toggle-btn ${view === v ? "active" : ""}`}
               onClick={() => setView(v)}
               type="button"
-              title={
-                v === "SP" ? "Single (cualquier chart)" :
-                v === "BSP" ? "Single Basic" :
-                v === "DSP" ? "Single Difficult" :
-                v === "ESP" ? "Single Expert" :
-                "Single Challenge"
-              }
             >
               {v}
             </button>
@@ -371,13 +339,6 @@ function SeriesBadges({ dancerName }: { dancerName: string }) {
               className={`dh-toggle-btn ${view === v ? "active" : ""}`}
               onClick={() => setView(v)}
               type="button"
-              title={
-                v === "DP" ? "Double (cualquier chart)" :
-                v === "BDP" ? "Double Basic" :
-                v === "DDP" ? "Double Difficult" :
-                v === "EDP" ? "Double Expert" :
-                "Double Challenge"
-              }
             >
               {v}
             </button>
@@ -415,7 +376,6 @@ function SeriesBadges({ dancerName }: { dancerName: string }) {
 
 function BadgeModal({ badge, view, onClose }: { badge: Badge; view: View; onClose: () => void }) {
   const labelView = view;
-
   const isAll = badge.done === badge.total && badge.total > 0;
 
   return (

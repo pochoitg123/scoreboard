@@ -3,6 +3,7 @@ from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, Dict, Any
 from datetime import datetime, timezone, timedelta
 import json
+from urllib.parse import urlencode  # ← para construir querystring de forma segura
 
 from app.auth.security import (
     hash_password, verify_password,
@@ -23,19 +24,23 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 COOKIE_NAME = "access_token"
 
+
 class RegisterIn(BaseModel):
     username: str = Field(min_length=3, max_length=32)
     email: EmailStr
     password: str = Field(min_length=6, max_length=128)
     refid: str = Field(min_length=4, max_length=64)
 
+
 class LoginIn(BaseModel):
     username: str
     password: str
 
+
 class UserOut(BaseModel):
     username: str
     linked: dict | None = None
+
 
 def _find_profile_by_refid(refid: str) -> Optional[Dict[str, Any]]:
     path = settings.NDJSON_PATH
@@ -61,6 +66,7 @@ def _find_profile_by_refid(refid: str) -> Optional[Dict[str, Any]]:
         return None
     return None
 
+
 @router.post("/register", response_model=UserOut)
 def register(payload: RegisterIn):
     if find_user(payload.username):
@@ -84,6 +90,7 @@ def register(payload: RegisterIn):
     )
     return {"username": user["username"], "linked": user["linked"]}
 
+
 @router.post("/login", response_model=UserOut)
 def login(payload: LoginIn, response: Response):
     user = find_user_any(payload.username)  # <--- antes: find_user(payload.username)
@@ -102,28 +109,38 @@ def logout(response: Response):
     response.delete_cookie(COOKIE_NAME, path="/")
     return {"ok": True}
 
+
 # -------- Password reset --------
 class ForgotIn(BaseModel):
     email: EmailStr
 
+
+def build_reset_link(token: str) -> str:
+    base = (getattr(settings, "FRONTEND_RESET_URL", "") or "").strip()
+    base = base.rstrip("/")  # <-- quita barras finales extra
+    base = base.replace("#/reset", "/reset").replace("#/", "/")
+    if base.endswith("?token="):
+        return f"{base}{token}"
+    sep = "&" if "?" in base else "?"
+    return f"{base}{sep}{urlencode({'token': token})}"
+
 @router.post("/forgot")
 def forgot_password(payload: ForgotIn):
     user = find_user_by_email(str(payload.email).lower())
-    # responder 200 siempre (evita user enumeration)
     if not user:
         return {"ok": True}
     token = create_reset_token(user["username"], minutes=30)
-    # guarda token (para poder invalidarlo/consumirlo)
     exp_ts = int((datetime.now(timezone.utc) + timedelta(minutes=30)).timestamp())
     add_reset_token(user["username"], token, exp_ts)
 
-    link = settings.FRONTEND_RESET_URL + token
+    link = build_reset_link(token)  # <-- aquí el cambio
     send_password_reset_email(user["email"], link)
     return {"ok": True}
 
 class ResetIn(BaseModel):
     token: str
     new_password: str = Field(min_length=6, max_length=128)
+
 
 @router.post("/reset")
 def reset_password(payload: ResetIn):

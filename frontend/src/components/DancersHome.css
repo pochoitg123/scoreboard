@@ -1,555 +1,149 @@
-/* Layout */
-.dh-wrap { display: grid; gap: 16px; }
-.dh-title { font-weight: 900; font-size: 20px; }
-.dh-subtitle { color: #64748b; }
-.dh-input {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 6px 10px;
-  max-width: 260px;
-}
-.dh-muted { color: #6b7280; }
-.dh-error { color: red; }
-.dh-total { font-weight: 600; color: #475569; }
-
-.dh-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+/* ============ DancersHome.css ============ */
+:root{
+  --bg: #ffffff;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --ring: #0ea5e9;
+  --card-shadow: 0 2px 6px rgba(0,0,0,.06);
+  --card-shadow-lg: 0 8px 30px rgba(2,8,23,.08);
 }
 
-.dh-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 12px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,.05);
-  display: grid;
-  gap: 8px;
-}
-.dh-card-name { font-weight: 800; font-size: 16px; }
-
-.dh-stats {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-}
-.dh-stat { text-align: center; }
-.dh-stat-value { font-weight: 800; }
-.dh-stat-label { font-size: 12px; color: #6b7280; }
-
-/* Botón */
-.dh-btn {
-  margin-top: 8px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid #0ea5e9;
-  background: #0ea5e9;
-  color: #fff;
-  font-weight: 600;
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.dh-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(14,165,233,.25); }
-
-/* Badges */
-.dh-badges-block { margin-top: 4px; }
-.dh-badges-title { font-weight: 700; color: #334155; margin: 6px 0 2px; }
-.dh-badges-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
-
-.dh-badge {
-  width: 40px; height: 40px; border-radius: 8px;
-  border: 1px solid #e5e7eb; background: #fff; overflow: hidden;
-  display: inline-grid; place-items: center; transition: transform .15s ease;
-}
-.dh-badge img { width: 100%; height: 100%; object-fit: contain; }
-
-@keyframes glowPulseGold {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(255,215,0,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-@keyframes glowPulseGreen {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(34,197,94,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
+/* Motion-safe */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
 
-.dh-badge.gold:hover  { animation: glowPulseGold 1.2s infinite; transform: translateY(-2px); }
-.dh-badge.green:hover { animation: glowPulseGreen 1.2s infinite; transform: translateY(-2px); }
+/* Wrapper */
+.dh-wrap{
+  display:grid; gap:1.25rem; padding:1rem;
+  animation: dh-fade-in .4s ease;
+}
+@keyframes dh-fade-in{ from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
 
-.dh-badges-note { font-size: 10px; color: #64748b; text-align: left; margin-top: 4px; }
+.dh-title{
+  font-weight:900; font-size:1.5rem; color:var(--ink); position:relative;
+}
+.dh-title::after{
+  content:""; display:block; width:72px; height:4px; margin-top:.4rem; border-radius:2px;
+  background:linear-gradient(90deg,#0ea5e9,#0284c7);
+  animation: dh-underline .6s ease;
+}
+@keyframes dh-underline{ from{width:0; opacity:0} to{width:72px; opacity:1} }
 
-.dh-error-mini { color: #ef4444; font-size: 12px; }
-.dh-muted-mini { color: #6b7280; font-size: 12px; }
+.dh-subtitle{ color:var(--muted); }
 
-/* ===== Modal ===== */
-.dh-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  display: grid;
-  place-items: center;
-  z-index: 100;
+.dh-input{
+  border:1px solid var(--border); border-radius:10px; padding:.55rem .75rem; max-width:320px; background:#f8fafc;
+  transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
 }
-.dh-modal-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  max-width: 420px;
-  width: 100%;
-  box-shadow: 0 10px 30px rgba(0,0,0,.3);
-}
-.dh-modal-card h3 {
-  font-weight: 800;
-  margin-bottom: 10px;
-}
-.dh-modal-card ul {
-  margin: 6px 0 10px;
-  padding-left: 20px;
-}
-.dh-modal-card li {
-  margin: 2px 0;
+.dh-input::placeholder{ color:#94a3b8; }
+.dh-input:focus{
+  outline:2px solid transparent; border-color:transparent;
+  box-shadow:0 0 0 3px rgba(14,165,233,.35);
+  background:#fff;
 }
 
-/* Badges apagados */
-.dh-badge.none {
-  filter: grayscale(100%) brightness(70%);
-  cursor: pointer;
-}
-.dh-badge.none:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 8px rgba(0,0,0,0.25);
+.dh-muted{ color:#6b7280; }
+.dh-error{ color:#dc2626; font-weight:700; animation: dh-wiggle .25s ease; }
+@keyframes dh-wiggle{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 75%{transform:translateX(3px)} }
+
+.dh-total{ font-weight:700; color:#475569; }
+
+/* Grid de tarjetas */
+.dh-grid{
+  display:grid; gap:1rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 }
 
-/* Layout */
-.dh-wrap { display: grid; gap: 16px; }
-.dh-title { font-weight: 900; font-size: 20px; }
-.dh-subtitle { color: #64748b; }
-.dh-input {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 6px 10px;
-  max-width: 260px;
+/* Card */
+.dh-card{
+  border:1px solid var(--border); border-radius:16px; background:var(--bg); padding:14px;
+  box-shadow: var(--card-shadow);
+  display:grid; gap:.6rem;
+  transform: translateZ(0);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  animation: dh-rise .45s ease both;
 }
-.dh-muted { color: #6b7280; }
-.dh-error { color: red; }
-.dh-total { font-weight: 600; color: #475569; }
+@keyframes dh-rise{ from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
+.dh-card:hover{ transform: translateY(-4px); box-shadow: var(--card-shadow-lg); border-color:#dbe3ee; }
 
-.dh-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-}
+.dh-card-name{ font-weight:900; font-size:1.05rem; color:#0b1220; letter-spacing:.2px; }
 
-.dh-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 12px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,.05);
-  display: grid;
-  gap: 8px;
+/* Mini KPIs */
+.dh-stats{
+  display:grid; gap:8px; grid-template-columns: repeat(6,1fr);
 }
-.dh-card-name { font-weight: 800; font-size: 16px; }
-
-.dh-stats {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-}
-.dh-stat { text-align: center; }
-.dh-stat-value { font-weight: 800; }
-.dh-stat-label { font-size: 12px; color: #6b7280; }
+@media (max-width:560px){ .dh-stats{ grid-template-columns: repeat(3,1fr);} }
+.dh-stat{ text-align:center; background:#f8fafc; border:1px solid #eef2f7; border-radius:10px; padding:.45rem 0; }
+.dh-stat-value{ font-weight:900; }
+.dh-stat-label{ font-size:.75rem; color:#6b7280; }
 
 /* Botón */
-.dh-btn {
-  margin-top: 8px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid #0ea5e9;
-  background: #0ea5e9;
-  color: #fff;
-  font-weight: 600;
-  transition: transform .12s ease, box-shadow .12s ease;
+.dh-btn{
+  margin-top:6px; padding:.55rem .8rem; border-radius:10px;
+  border:1px solid #0ea5e9; background:#0ea5e9; color:#fff; font-weight:700;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
 }
-.dh-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(14,165,233,.25); }
+.dh-btn:hover{ transform: translateY(-2px); box-shadow:0 10px 24px rgba(14,165,233,.25); filter:saturate(1.05); }
+.dh-btn:focus{ outline:2px solid transparent; box-shadow:0 0 0 3px rgba(14,165,233,.35); }
+
+/* Toggles */
+.dh-toggle{ display:flex; flex-wrap:wrap; gap:8px; margin:.25rem 0 .5rem; }
+.dh-toggle-btn{
+  border:1px solid var(--border); background:#f8fafc; border-radius:999px; padding:.35rem .8rem;
+  font-size:.8rem; font-weight:800; color:#334155; cursor:pointer;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+}
+.dh-toggle-btn:hover{ transform: translateY(-1px); box-shadow:0 6px 16px rgba(2,8,23,.07); }
+.dh-toggle-btn.active{ background:#0ea5e9; color:#fff; border-color:#0ea5e9; box-shadow:0 4px 14px rgba(14,165,233,.35); }
 
 /* Badges */
-.dh-badges-block { margin-top: 4px; }
-.dh-badges-title { font-weight: 700; color: #334155; margin: 6px 0 2px; }
-.dh-badges-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.dh-badges-block{ margin-top:2px; }
+.dh-badges-title{ font-weight:800; color:#334155; margin:6px 0 2px; }
+.dh-badges-wrap{ display:flex; flex-wrap:wrap; gap:8px; }
 
-.dh-badge {
-  width: 40px; height: 40px; border-radius: 8px;
-  border: 1px solid #e5e7eb; background: #fff; overflow: hidden;
-  display: inline-grid; place-items: center; transition: transform .15s ease, box-shadow .15s ease;
+.dh-badge{
+  width:42px; height:42px; border-radius:10px; border:1px solid var(--border);
+  background:#fff; overflow:hidden; display:grid; place-items:center;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+  will-change: transform;
 }
-.dh-badge img { width: 100%; height: 100%; object-fit: contain; }
+.dh-badge img{ width:100%; height:100%; object-fit:contain; }
 
-/* —— Animaciones de brillo —— */
-@keyframes glowPulseGold {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(255,215,0,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-@keyframes glowPulseGreen {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(34,197,94,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-@keyframes glowPulseBlue {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(59,130,246,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
+/* Brillos por tier (siempre activos) */
+@keyframes dh-gold { 0%,100%{box-shadow:0 0 0 rgba(0,0,0,0)} 50%{box-shadow:0 0 18px rgba(255,215,0,.85)} }
+@keyframes dh-green{ 0%,100%{box-shadow:0 0 0 rgba(0,0,0,0)} 50%{box-shadow:0 0 18px rgba(34,197,94,.85)} }
+@keyframes dh-blue { 0%,100%{box-shadow:0 0 0 rgba(0,0,0,0)} 50%{box-shadow:0 0 18px rgba(59,130,246,.85)} }
 
-/* Siempre animados (sin hover) según el tier */
-.dh-badge.gold  { animation: glowPulseGold 1.2s infinite; }
-.dh-badge.green { animation: glowPulseGreen 1.2s infinite; }
-.dh-badge.blue  { animation: glowPulseBlue 1.2s infinite; }
+.dh-badge.gold  { animation: dh-gold 1.25s infinite; }
+.dh-badge.green { animation: dh-green 1.25s infinite; }
+.dh-badge.blue  { animation: dh-blue 1.25s infinite; }
 
-/* Un pequeño lift al pasar el mouse (opcional, no afecta la animación) */
-.dh-badge:hover { transform: translateY(-2px); }
+.dh-badge:hover{ transform: translateY(-2px) scale(1.02); border-color:#d0d8e5; }
+.dh-badge.inactive img{ filter:grayscale(1) brightness(.85) contrast(1.05); opacity:.6; }
 
-/* Serie sin iniciar: imagen totalmente gris */
-.dh-badge.inactive img {
-  filter: grayscale(1) brightness(.85) contrast(1.05);
-  opacity: .6;
-}
+.dh-badges-note{ font-size:10px; color:#64748b; }
 
-/* Nota & estados */
-.dh-badges-note { font-size: 10px; color: #64748b; text-align: left; margin-top: 4px; }
+/* Modal */
+.dh-modal-overlay{
+  position:fixed; inset:0; background:rgba(2,8,23,.6); display:grid; place-items:center; z-index:100;
+  animation: dh-fade-in .2s ease;
+}
+.dh-modal-card{
+  background:#fff; border-radius:14px; padding:18px; max-width:480px; width:calc(100% - 2rem);
+  box-shadow:0 16px 48px rgba(2,8,23,.35); transform: translateY(6px); animation: dh-modal-up .28s ease forwards;
+}
+@keyframes dh-modal-up{ to{ transform: translateY(0) } }
+.dh-modal-card h3{ font-weight:900; margin-bottom:10px; }
+.dh-modal-card ul{ margin:6px 0 10px; padding-left:20px; }
+.dh-modal-card li{ margin:2px 0; }
 
-.dh-error-mini { color: #ef4444; font-size: 12px; }
-.dh-muted-mini { color: #6b7280; font-size: 12px; }
-
-/* ===== Modal ===== */
-.dh-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  display: grid;
-  place-items: center;
-  z-index: 100;
+/* Skeletons para carga (usalo si mapeas placeholders) */
+.dh-skel{ position:relative; overflow:hidden; background:#eef2f7; border-radius:10px; }
+.dh-skel::after{
+  content:""; position:absolute; inset:0; translate:-100% 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent);
+  animation: dh-shimmer 1.2s infinite;
 }
-.dh-modal-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  max-width: 420px;
-  width: 100%;
-  box-shadow: 0 10px 30px rgba(0,0,0,.3);
-}
-.dh-modal-card h3 {
-  font-weight: 800;
-  margin-bottom: 10px;
-}
-.dh-modal-card ul {
-  margin: 6px 0 10px;
-  padding-left: 20px;
-}
-.dh-modal-card li {
-  margin: 2px 0;
-}
-
-/* Layout y tarjetas (sin cambios relevantes) */
-.dh-wrap { display: grid; gap: 16px; }
-.dh-title { font-weight: 900; font-size: 20px; }
-.dh-subtitle { color: #64748b; }
-.dh-input {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 6px 10px;
-  max-width: 260px;
-}
-.dh-muted { color: #6b7280; }
-.dh-error { color: red; }
-.dh-total { font-weight: 600; color: #475569; }
-
-.dh-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-}
-
-.dh-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 12px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,.05);
-  display: grid;
-  gap: 8px;
-}
-.dh-card-name { font-weight: 800; font-size: 16px; }
-
-.dh-stats {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-}
-.dh-stat { text-align: center; }
-.dh-stat-value { font-weight: 800; }
-.dh-stat-label { font-size: 12px; color: #6b7280; }
-
-/* Botón principal */
-.dh-btn {
-  margin-top: 8px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid #0ea5e9;
-  background: #0ea5e9;
-  color: #fff;
-  font-weight: 600;
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.dh-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(14,165,233,.25); }
-
-/* ====== Toggles de vista ====== */
-.dh-toggle { display: inline-flex; gap: 6px; margin: 6px 0 8px; }
-.dh-toggle-btn {
-  border: 1px solid #e5e7eb;
-  background: #f8fafc;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #334155;
-  cursor: pointer;
-  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-}
-.dh-toggle-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,.06); }
-.dh-toggle-btn.active {
-  background: #0ea5e9;
-  color: #fff;
-  border-color: #0ea5e9;
-}
-
-/* ====== Badges ====== */
-.dh-badges-block { margin-top: 4px; }
-.dh-badges-title { font-weight: 700; color: #334155; margin: 6px 0 2px; }
-.dh-badges-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
-
-.dh-badge {
-  width: 40px; height: 40px; border-radius: 8px;
-  border: 1px solid #e5e7eb; background: #fff; overflow: hidden;
-  display: inline-grid; place-items: center; transition: transform .15s ease, box-shadow .15s ease;
-}
-.dh-badge img { width: 100%; height: 100%; object-fit: contain; }
-
-/* —— Animaciones de brillo (siempre activas por tier) —— */
-@keyframes glowPulseGold {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(255,215,0,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-@keyframes glowPulseGreen {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(34,197,94,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-@keyframes glowPulseBlue {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(59,130,246,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-
-.dh-badge.gold  { animation: glowPulseGold 1.2s infinite; }
-.dh-badge.green { animation: glowPulseGreen 1.2s infinite; }
-.dh-badge.blue  { animation: glowPulseBlue 1.2s infinite; }
-
-/* Lift sutil opcional */
-.dh-badge:hover { transform: translateY(-2px); }
-
-/* Serie sin iniciar: imagen totalmente gris */
-.dh-badge.inactive img {
-  filter: grayscale(1) brightness(.85) contrast(1.05);
-  opacity: .6;
-}
-
-/* Nota & estados */
-.dh-badges-note { font-size: 10px; color: #64748b; text-align: left; margin-top: 4px; }
-
-.dh-error-mini { color: #ef4444; font-size: 12px; }
-.dh-muted-mini { color: #6b7280; font-size: 12px; }
-
-/* ===== Modal ===== */
-.dh-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  display: grid;
-  place-items: center;
-  z-index: 100;
-}
-.dh-modal-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  max-width: 420px;
-  width: 100%;
-  box-shadow: 0 10px 30px rgba(0,0,0,.3);
-}
-.dh-modal-card h3 {
-  font-weight: 800;
-  margin-bottom: 10px;
-}
-.dh-modal-card ul {
-  margin: 6px 0 10px;
-  padding-left: 20px;
-}
-.dh-modal-card li {
-  margin: 2px 0;
-}
-
-/* Layout */
-.dh-wrap { display: grid; gap: 16px; }
-.dh-title { font-weight: 900; font-size: 20px; }
-.dh-subtitle { color: #64748b; }
-.dh-input {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 6px 10px;
-  max-width: 260px;
-}
-.dh-muted { color: #6b7280; }
-.dh-error { color: red; }
-.dh-total { font-weight: 600; color: #475569; }
-
-.dh-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
-}
-
-.dh-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 12px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,.05);
-  display: grid;
-  gap: 8px;
-}
-.dh-card-name { font-weight: 800; font-size: 16px; }
-
-.dh-stats {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-}
-.dh-stat { text-align: center; }
-.dh-stat-value { font-weight: 800; }
-.dh-stat-label { font-size: 12px; color: #6b7280; }
-
-/* Botón principal */
-.dh-btn {
-  margin-top: 8px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid #0ea5e9;
-  background: #0ea5e9;
-  color: #fff;
-  font-weight: 600;
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.dh-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(14,165,233,.25); }
-
-/* ====== Toggles ====== */
-.dh-toggle { display: grid; gap: 6px; margin: 6px 0 8px; }
-.dh-toggle-row { display: flex; flex-wrap: wrap; gap: 6px; }
-
-.dh-toggle-btn {
-  border: 1px solid #e5e7eb;
-  background: #f8fafc;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #334155;
-  cursor: pointer;
-  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-}
-.dh-toggle-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,.06); }
-.dh-toggle-btn.active {
-  background: #0ea5e9;
-  color: #fff;
-  border-color: #0ea5e9;
-}
-
-/* ====== Badges ====== */
-.dh-badges-block { margin-top: 4px; }
-.dh-badges-title { font-weight: 700; color: #334155; margin: 6px 0 2px; }
-.dh-badges-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
-
-.dh-badge {
-  width: 40px; height: 40px; border-radius: 8px;
-  border: 1px solid #e5e7eb; background: #fff; overflow: hidden;
-  display: inline-grid; place-items: center; transition: transform .15s ease, box-shadow .15s ease;
-}
-.dh-badge img { width: 100%; height: 100%; object-fit: contain; }
-
-/* —— Animaciones de brillo (siempre activas por tier) —— */
-@keyframes glowPulseGold {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(255,215,0,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-@keyframes glowPulseGreen {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(34,197,94,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-@keyframes glowPulseBlue {
-  0% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-  50% { box-shadow: 0 0 18px rgba(59,130,246,.85); }
-  100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-}
-
-.dh-badge.gold  { animation: glowPulseGold 1.2s infinite; }
-.dh-badge.green { animation: glowPulseGreen 1.2s infinite; }
-.dh-badge.blue  { animation: glowPulseBlue 1.2s infinite; }
-
-/* Lift sutil opcional */
-.dh-badge:hover { transform: translateY(-2px); }
-
-/* Serie sin iniciar: imagen totalmente gris */
-.dh-badge.inactive img {
-  filter: grayscale(1) brightness(.85) contrast(1.05);
-  opacity: .6;
-}
-
-/* Nota & estados */
-.dh-badges-note { font-size: 10px; color: #64748b; text-align: left; margin-top: 4px; }
-
-.dh-error-mini { color: #ef4444; font-size: 12px; }
-.dh-muted-mini { color: #6b7280; font-size: 12px; }
-
-/* ===== Modal ===== */
-.dh-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  display: grid;
-  place-items: center;
-  z-index: 100;
-}
-.dh-modal-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  max-width: 420px;
-  width: 100%;
-  box-shadow: 0 10px 30px rgba(0,0,0,.3);
-}
-.dh-modal-card h3 {
-  font-weight: 800;
-  margin-bottom: 10px;
-}
-.dh-modal-card ul {
-  margin: 6px 0 10px;
-  padding-left: 20px;
-}
-.dh-modal-card li {
-  margin: 2px 0;
-}
+@keyframes dh-shimmer{ to{ translate:100% 0 } }

@@ -1,4 +1,4 @@
-# app/services/cache.py
+# app/services/cache.py (enhanced with JSON error context)
 from __future__ import annotations
 import json
 import os
@@ -7,6 +7,28 @@ from app.core.config import settings
 
 Json = Dict[str, Any]
 Key = Union[int, str]
+
+
+def _print_json_context(path: str, e: json.JSONDecodeError, context_lines: int = 5) -> None:
+    """
+    Print helpful context around a JSON decoding error to stdout.
+    This is safe to call during FastAPI/Starlette startup.
+    """
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            lines = f.read().splitlines()
+        start = max(0, (e.lineno or 1) - context_lines - 1)
+        end = min(len(lines), (e.lineno or 1) + context_lines - 1)
+        print(f"[songs.json] JSON inválido en línea {e.lineno}, columna {e.colno} (char {e.pos})")
+        for i in range(start, end + 1):
+            prefix = ">>" if (i + 1) == e.lineno else "  "
+            print(f"{prefix} {i+1:>8}: {lines[i]}")
+        print("\nPosibles causas:")
+        print(" - Falta coma al final de la línea anterior")
+        print(" - Coma extra antes de ] o }")
+        print(" - Llaves/Corchetes desbalanceados o '}{' sin coma")
+    except Exception as ex:
+        print(f"[songs.json] No se pudo imprimir el contexto del error: {ex}")
 
 
 class Cache:
@@ -100,8 +122,19 @@ class Cache:
         """
         by: Dict[Key, Json] = {}
 
-        with open(settings.SONGS_DICT_PATH, "r", encoding="utf-8") as f:
-            raw = json.load(f)
+        try:
+            with open(settings.SONGS_DICT_PATH, "r", encoding="utf-8") as f:
+                raw = json.load(f)
+        except json.JSONDecodeError as e:
+            # Mostrar contexto útil en logs de arranque
+            _print_json_context(settings.SONGS_DICT_PATH, e, context_lines=6)
+            # Repropagar para que FastAPI falle de forma explícita (como antes)
+            raise
+        except FileNotFoundError:
+            # Si no existe el archivo, dejar índices vacíos pero reportar
+            print(f"[songs.json] Archivo no encontrado: {settings.SONGS_DICT_PATH}")
+            self.songs_by_mcode = {}
+            return
 
         if isinstance(raw, list):
             for it in raw:
@@ -138,28 +171,34 @@ class Cache:
         by_refid: Dict[str, Json] = {}
         by_pcbid: Dict[str, Json] = {}
 
-        with open(settings.NDJSON_PATH, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    obj = json.loads(line)
-                except Exception:
-                    continue
+        try:
+            with open(settings.NDJSON_PATH, "r", encoding="utf-8") as f:
+                for line_no, line in enumerate(f, start=1):
+                    s = line.strip()
+                    if not s:
+                        continue
+                    try:
+                        obj = json.loads(s)
+                    except json.JSONDecodeError as e:
+                        # Loguear y continuar (línea malformada no tumba el servidor)
+                        print(f"[ndjson] línea {line_no}: JSON inválido (col {e.colno}): {e.msg}")
+                        continue
 
-                col = obj.get("collection")
-                if col == "score3":
-                    scores.append(obj)
-                elif col == "hiscore3":
-                    his.append(obj)
-                elif col == "profile3":
-                    refid = obj.get("__refid") or obj.get("refid")
-                    if isinstance(refid, str):
-                        by_refid[refid] = obj
-                    pcbid = obj.get("pcbid")
-                    if isinstance(pcbid, str):
-                        by_pcbid[pcbid] = obj
+                    col = obj.get("collection")
+                    if col == "score3":
+                        scores.append(obj)
+                    elif col == "hiscore3":
+                        his.append(obj)
+                    elif col == "profile3":
+                        refid = obj.get("__refid") or obj.get("refid")
+                        if isinstance(refid, str):
+                            by_refid[refid] = obj
+                        pcbid = obj.get("pcbid")
+                        if isinstance(pcbid, str):
+                            by_pcbid[pcbid] = obj
+        except FileNotFoundError:
+            print(f"[ndjson] Archivo no encontrado: {settings.NDJSON_PATH}")
+            # Dejar estructuras vacías
 
         self.scores = scores
         self.hiscores = his
@@ -169,4 +208,3 @@ class Cache:
 
 # instancia global
 cache = Cache()
-

@@ -3,7 +3,7 @@ from email.message import EmailMessage
 from app.core.config import settings
 
 def send_password_reset_email(to_email: str, reset_link: str):
-    subject = "Recuperar contraseña - PIU/DDR WebUI"
+    subject = "Recuperar contraseña - DDR WebUI"
     body = f"Hola,\n\nPara restablecer tu contraseña haz clic en:\n{reset_link}\n\nSi no solicitaste esto, ignora el mensaje."
     if settings.EMAIL_BACKEND.lower() != "smtp":
         # modo consola (dev)

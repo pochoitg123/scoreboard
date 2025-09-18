@@ -2,7 +2,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.routers import scores, songs, stats, auth, me, customize  # ← incluye customize
+from app.api.routers import scores, songs, stats, auth, me, customize
+from app.api.routers import judgments   # 👈 nuevo import
 from app.services.cache import cache
 
 app = FastAPI(title="PIU/DDR Scores (NDJSON)")
@@ -18,12 +19,13 @@ app.add_middleware(
 # Routers de autenticación/perfil/customize
 app.include_router(auth.router)       # /auth/*
 app.include_router(me.router)         # /me/*
-app.include_router(customize.router)  # /me/customize  ← importa y monta
+app.include_router(customize.router)  # /me/customize
 
 # Routers existentes
 app.include_router(scores.router)
-app.include_router(songs.router)                
+app.include_router(songs.router)
 app.include_router(stats.router)
+app.include_router(judgments.router)  # 👈 monta /api/stats/judgments
 
 @app.on_event("startup")
 def _startup():

@@ -101,3 +101,29 @@ export async function fetchDancersSummary(): Promise<DancerSummaryRow[]> {
   const { data } = await API.get("/stats/dancers");
   return Array.isArray(data?.rows) ? data.rows : [];
 }
+
+export type GlobalJudgmentTotals = {
+  songs: number; marvelous: number; perfect: number; great: number;
+  good: number; bad: number; miss: number; total_notes: number; other: number;
+};
+export type PlayerJudgmentTotals = GlobalJudgmentTotals & {
+  refid: string;
+  name?: string | null;   // 👈 nuevo
+};
+export type JudgmentStatsResponse = { global_: GlobalJudgmentTotals; players: PlayerJudgmentTotals[] };
+const API_BASE = import.meta.env.VITE_API_BASE ?? "";
+
+// Reemplaza esta función por esta versión:
+export async function fetchJudgmentStats(refid?: string): Promise<JudgmentStatsResponse> {
+  // fallback: si estamos en dev (5173) y no hay VITE_API_BASE, usa 8000
+  const base =
+    API_BASE ||
+    (window.location.port === "5173" ? "http://localhost:8000" : "");
+
+  const url = new URL("/api/stats/judgments", base || window.location.origin);
+  if (refid) url.searchParams.set("refid", refid);
+
+  const res = await fetch(url.toString(), { credentials: "include" });
+  if (!res.ok) throw new Error(`Error ${res.status}`);
+  return await res.json();
+}
